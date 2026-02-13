@@ -14,6 +14,11 @@ class DashboardView extends GetView<DashboardController> {
       Get.put(DashboardController());
     }
 
+    // Set nav index to 0 (Dashboard/Home) after build frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.setNavIndex(0);
+    });
+
     return Scaffold(
       backgroundColor: const Color(0xFF000000),
       body: SafeArea(
@@ -315,10 +320,13 @@ class DashboardView extends GetView<DashboardController> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(Icons.home_filled, "Utama", true, null),
-            _buildNavItem(Icons.confirmation_num_outlined, "Tiket", false, null),
-            _buildNavItem(Icons.favorite_border, "Favorit", false, null),
-            _buildNavItem(Icons.person_outline, "Profil", false, () => Get.toNamed('/profile')),
+            _buildNavItem(Icons.home_filled, "Utama", 0, null),
+            _buildNavItem(Icons.confirmation_num_outlined, "Tiket", 1,
+                () => Get.toNamed('/ticket')),
+            _buildNavItem(Icons.favorite_border, "Favorit", 2,
+                () => Get.toNamed('/favorite')),
+            _buildNavItem(Icons.person_outline, "Profil", 3,
+                () => Get.toNamed('/profile')),
           ],
         ),
       ),
@@ -326,26 +334,48 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   // Helper untuk membangun item navigasi bawah
-  Widget _buildNavItem(IconData icon, String label, bool isActive, VoidCallback? onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? const Color(0xFFFFC107) : Colors.white30,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: isActive ? const Color(0xFFFFC107) : Colors.white30,
-              fontSize: 12,
+  Widget _buildNavItem(IconData icon, String label, int index,
+      VoidCallback? onTap) {
+    return Obx(
+      () {
+        final isActive = controller.selectedNavIndex.value == index;
+        return GestureDetector(
+          onTap: () {
+            controller.onNavItemTap(index);
+            onTap?.call();
+          },
+          child: ScaleTransition(
+            scale: isActive ? controller.getScaleAnimation() : AlwaysStoppedAnimation(1),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isActive
+                        ? const Color(0xFFFFC107).withOpacity(0.2)
+                        : Colors.transparent,
+                  ),
+                  child: Icon(
+                    icon,
+                    color: isActive ? const Color(0xFFFFC107) : Colors.white30,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: isActive ? const Color(0xFFFFC107) : Colors.white30,
+                    fontSize: 12,
+                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

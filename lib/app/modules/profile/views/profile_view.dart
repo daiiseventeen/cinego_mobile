@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/profile_controller.dart';
+import '../../dashboard/controllers/dashboard_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
@@ -10,6 +11,13 @@ class ProfileView extends GetView<ProfileController> {
     if (!Get.isRegistered<ProfileController>()) {
       Get.put(ProfileController());
     }
+
+    // Set nav index to 3 (Profile) after build frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.isRegistered<DashboardController>()) {
+        Get.find<DashboardController>().setNavIndex(3);
+      }
+    });
 
     return Scaffold(
       backgroundColor: const Color(0xFF0a0a0a),

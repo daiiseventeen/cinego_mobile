@@ -1,11 +1,17 @@
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import '../../../services/auth_service.dart';
 
-class DashboardController extends GetxController {
+class DashboardController extends GetxController
+    with GetTickerProviderStateMixin {
   // State untuk kategori yang dipilih menggunakan observable
   var selectedCategory = 'Semua'.obs;
   var userName = "".obs;
-  
+  var selectedNavIndex = 0.obs;
+
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
   final List<String> categories = ['Semua', 'Action', 'Drama', 'Horror', 'Sci-Fi', 'Comedy'];
 
   final AuthService authService = Get.find<AuthService>();
@@ -46,7 +52,25 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _initializeAnimation();
     loadUserName();
+  }
+
+  void _initializeAnimation() {
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(begin: 1, end: 1.2).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+    );
+  }
+
+  @override
+  void onClose() {
+    _animationController.dispose();
+    super.onClose();
   }
 
   Future<void> loadUserName() async {
@@ -65,4 +89,15 @@ class DashboardController extends GetxController {
   void changeCategory(String category) {
     selectedCategory.value = category;
   }
+
+  void onNavItemTap(int index) {
+    selectedNavIndex.value = index;
+    _animationController.forward(from: 0);
+  }
+
+  void setNavIndex(int index) {
+    selectedNavIndex.value = index;
+  }
+
+  Animation<double> getScaleAnimation() => _scaleAnimation;
 }
