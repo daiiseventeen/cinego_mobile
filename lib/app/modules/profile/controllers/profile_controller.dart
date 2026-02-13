@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../../../../services/auth_service.dart';
+import '../../../services/auth_service.dart';
 
 class ProfileController extends GetxController {
   // Mock data profil menggunakan observable (.obs)

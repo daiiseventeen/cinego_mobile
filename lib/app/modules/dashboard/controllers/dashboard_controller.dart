@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../../../../services/auth_service.dart';
+import '../../../services/auth_service.dart';
 
 class DashboardController extends GetxController {
   // State untuk kategori yang dipilih menggunakan observable

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../services/auth_service.dart';
+import '../../../services/auth_service.dart';
 
 class AuthController extends GetxController {
   static AuthController get to => Get.find();
